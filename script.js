@@ -69,7 +69,7 @@ function getSavedBestScores() {
 function updateBestScore() {
   bestScoreArray.forEach((score, index) => {
     // Select correct Best Score to update
-    if (questionAmount === score.questions) {
+    if (questionAmount == score.questions) {
       // Return Best Score as a number with one decimalc
       const savedBestScore = Number(bestScoreArray[index].bestScore)
       // Update if the new final score is less or replacing zero
@@ -121,18 +121,15 @@ function scoresToDOM() {
 
 // Stop timer, Process results, go to Score page
 function checkTime() {
-  console.log(timePlayed);
   if (playerGuessArray.length == questionAmount) {
-    console.log("player guess array:", playerGuessArray);
     clearInterval(timer);
     // Check for wrong answers, add penalty time
     for (let i = 0; i < playerGuessArray.length; i++) {
       if (playerGuessArray[i] != equationsArray[i].evaluated) {
-        penaltyTime += 0.5;
+        penaltyTime += 2.0;
       }
     }
     finalTime = timePlayed + penaltyTime;
-    console.log("time", timePlayed, "penalty", penaltyTime, "final", finalTime);
     scoresToDOM();
   }
 }
@@ -177,11 +174,9 @@ function getRandomInt(max) {
 function createEquations() {
 // Randomly choose how many correct equations there should be
   const correctEquations = getRandomInt(questionAmount);
-  console.log("correct equation:", correctEquations)
 
   // Set amount of wrong equations
   const wrongEquations = questionAmount - correctEquations;
-  console.log("wrong equation:", wrongEquations)
 // Loop through, multiply random numbers up to 9, push to array
 for (let i = 0; i < correctEquations; i++) {
   firstNumber = getRandomInt(9);
@@ -238,37 +233,35 @@ function equationsToDOM() {
   createEquations();
   equationsToDOM();
 
-
    // Set Blank Space Below
    const bottomSpacer = document.createElement('div');
    bottomSpacer.classList.add('height-500');
    itemContainer.appendChild(bottomSpacer);
  }
  
-
  function countdownStart() {
-  countdown.textContent = "3";
-  setTimeout(() => {
-    countdown.textContent = "2";
-  }, 1000);
-  setTimeout(() => {
-    countdown.textContent = "1";
-  }, 2000);
-  setTimeout(() => {
-    countdown.textContent = "GO!";
-  }, 3000);
+  let count = 3;
+  countdown.textContent = count;
+  const timeCountDown = setInterval(() => {
+    count--;
+    if (count === 0) {
+      countdown.textContent = "GO!";
+    } else if (count === -1) {
+      showGamePage();
+      clearInterval(timeCountDown)
+    } else {
+      countdown.textContent = count;
+    }
+  }, 1000)
  }
-
 
 //  Navigate from Splash page to Countdown page
 function showCountdown() {
   countdownPage.hidden = false;
   splashPage.hidden = true;
-  countdownStart();
   populateGamePage();
-  setTimeout(showGamePage, 400);
+  countdownStart();
 }
-
 
 //  Get the value from selected radio button
 function getRadioValue() {
@@ -285,7 +278,6 @@ function getRadioValue() {
 function selectQuestionAmount(e) {
   e.preventDefault();
   questionAmount = getRadioValue();
-  console.log("question amount", questionAmount);
   if (questionAmount) {
     showCountdown();
   } 
